@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from github import Github
+from github import Github, PullRequest
 import requests
 import logging
 import os
@@ -49,14 +49,17 @@ def get_pulls():
     res = requests.request('GET', f'https://api.github.com/repos/{REPO}/pulls')
     return res.content
 
+def filter14days(pull: PullRequest) -> bool:
+    return (
+            pull.merged_at is None and
+            (datetime.datetime.today() - pull.created_at) > datetime.timedelta(days=14)
+    )
+
 @app.route('/pulls/14days')
 def pulls_14days():
     r = get_repo(TOKEN, REPO)
     pulls = r.get_pulls()
-    res = []
-    for pull in pulls:
-        if pull.merged_at is None and (datetime.datetime.today() - pull.created_at) > datetime.timedelta(days=14):
-            res.append(pull.raw_data)
+    res = [p.raw_data for p in pulls if filter14days(p)]
 
     return jsonify(res)
 
