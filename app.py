@@ -16,6 +16,8 @@ REPO = os.environ.get('REPO')
 # print(sys.argv)
 app = Flask(__name__)
 
+client = app.test_client()
+
 def get_repo(token, repo):
     github = Github(token)
     return github.get_repo(repo)
