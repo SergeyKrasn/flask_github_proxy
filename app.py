@@ -7,11 +7,11 @@ import sys
 import datetime
 
 TOKEN = os.environ.get('TOKEN')
+REPO = os.environ.get('REPO')
 
 # REPO = 'pallets/flask'
 # REPO = 'temoto/vender'
 # REPO = 'PyGithub/PyGithub'
-REPO = os.environ.get('REPO')
 
 # print(sys.argv)
 app = Flask(__name__)
@@ -50,9 +50,11 @@ def get_pulls():
     return res.content
 
 def filter14days(pull: PullRequest) -> bool:
+    today = datetime.datetime.today()
+    delda14days = datetime.timedelta(days=14)
     return (
-            pull.merged_at is None and
-            (datetime.datetime.today() - pull.created_at) > datetime.timedelta(days=14)
+            (pull.merged_at is None or (today - pull.merged_at) <= delda14days) and
+            (today - pull.created_at) > delda14days
     )
 
 @app.route('/pulls/14days')
@@ -65,14 +67,16 @@ def pulls_14days():
 
 
 if __name__ == '__main__':
-    print('start app.py')
-
     args = sys.argv[1:]
+    # print(f'start app.py: {args}')
+
     if len(args) < 2:
         print("""\
-        USAGE: python app.py ????? 
+        USAGE: python app.py GithubTOKEN REPO 
         """)
         sys.exit(1)
+    TOKEN = args[0]
+    REPO = args[1]
 
     # app.config.update({
     #     'REPO': REPO,
