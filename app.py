@@ -72,13 +72,14 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     # print(f'start app.py: {args}')
 
-    if len(args) < 2:
+    if len(args) < 1 or :
         print("""\
-        USAGE: python app.py GithubTOKEN REPO 
+        USAGE: python app.py REPO [GithubTOKEN] 
         """)
         sys.exit(1)
-    TOKEN = args[0]
-    REPO = args[1]
+    REPO = args[0]
+    if len(args) > 1:
+        TOKEN = args[1]
 
     # app.config.update({
     #     'REPO': REPO,
