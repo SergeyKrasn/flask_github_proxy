@@ -72,7 +72,7 @@ if __name__ == '__main__':
     args = sys.argv[1:]
     # print(f'start app.py: {args}')
 
-    if len(args) < 1 or :
+    if len(args) < 1:
         print("""\
         USAGE: python app.py REPO [GithubTOKEN] 
         """)
